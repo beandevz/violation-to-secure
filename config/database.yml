@@ -1,0 +1,35 @@
+# INTENTIONALLY VULNERABLE SAMPLE - DO NOT USE IN PRODUCTION
+# Violation: CWE-798 Hard-coded credentials committed to source control.
+# Correct approach: ${DB_PASSWORD} resolved from the environment at runtime.
+
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+
+development:
+  <<: *default
+  host: localhost
+  database: customers_dev
+  username: app_admin
+  password: dev_password_123        # VIOLATION: hard-coded password
+
+staging:
+  <<: *default
+  host: staging-db.example.com
+  database: customers_staging
+  username: app_admin
+  password: St@ging_2024_Secret     # VIOLATION: hard-coded password
+
+production:
+  <<: *default
+  host: prod-db-01.internal.example.com
+  database: customers
+  username: app_admin
+  password: P@ssw0rd_2024!          # VIOLATION: production password in VCS
+  ssl_mode: disable                 # VIOLATION: TLS disabled to the database
+
+integrations:
+  smtp_user: noreply@example.com
+  smtp_password: MailGun-8f3d9a2b   # VIOLATION: hard-coded SMTP credential
+  redis_url: redis://:R3d1sP@ss@cache.example.com:6379/0
